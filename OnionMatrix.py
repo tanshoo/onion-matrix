@@ -10,15 +10,17 @@ class OnionMatrix:
     are correct and does not perform any validation.
     """
 
+    __slots__ = ("blocks", "n", "m")
+
     blocks: np.ndarray
     n: int 
     m: int 
 
 
     def __init__(self, blocks: list[np.ndarray]) -> None:
-        self.blocks = np.array(blocks)
-        self.n = len(blocks)
-        self.m = len(blocks[0])
+        self.blocks = np.asarray(blocks)
+        self.n = len(self.blocks)
+        self.m = len(self.blocks[0])
 
 
     def multiply(self, v: np.ndarray) -> np.ndarray:
@@ -47,7 +49,7 @@ class OnionMatrix:
 
         block_diffs = np.diff(self.blocks, axis=0, prepend=np.zeros((1, self.m, self.m)))
         b_diffs = np.diff(b.reshape(self.n, self.m), axis=0, prepend=np.zeros((1, self.m)))
-        res_suffix_sums = np.linalg.solve(block_diffs, b_diffs)
-        res_blocks = np.diff(res_suffix_sums[::-1], axis=0, prepend=np.zeros((1, self.m)))[::-1]
+        result_suffix_sums = np.linalg.solve(block_diffs, b_diffs)
+        result_blocks = np.diff(result_suffix_sums[::-1], axis=0, prepend=np.zeros((1, self.m)))[::-1]
 
-        return res_blocks.ravel()
+        return result_blocks.ravel()
