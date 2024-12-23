@@ -6,6 +6,16 @@ class OnionMatrix:
     # tu wklejona będzie implementacja z rozwiązania
     pass
 
+def matrix_from_onion(onion):
+    """
+    Constructs a matrix from an OnionMatrix object.
+    """
+    blocks = [
+        [onion.blocks[i] if j > i else onion.blocks[j] for j in range(onion.n)] 
+        for i in range(onion.n)
+    ]
+    return np.block(blocks)
+
 ##############################################################################
 # test m=n=3
 ##############################################################################
@@ -42,6 +52,12 @@ def test_multiply_time(n, m, N):
         # tu następuje ponadto sprawdzenie poprawności
         # wyniku i jeśli jest on niepoprawny, zwracane jest np.Inf
 
+        # check if the result is correct
+        A_normal = matrix_from_onion(A)
+        if not np.allclose(A_normal @ v, res):
+            return np.inf
+
+
     return np.max(times)
 
 ##############################################################################
@@ -62,6 +78,10 @@ def test_solve_time(n, m, N):
 
         # tu następuje ponadto sprawdzenie poprawności
         # wyniku i jeśli jest on niepoprawny, zwracane jest np.Inf
+
+        # check if the result is correct
+        if not np.allclose(A.multiply(res), b):
+            return np.inf
 
     return np.max(times)
 
