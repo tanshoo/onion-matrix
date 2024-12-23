@@ -1,10 +1,7 @@
 import numpy as np
 import time
+from OnionMatrix import OnionMatrix
 
-
-class OnionMatrix:
-    # tu wklejona będzie implementacja z rozwiązania
-    pass
 
 def matrix_from_onion(onion):
     """
