@@ -28,16 +28,17 @@ class OnionMatrix:
         :return: The result of the multiplication
         """
 
-        prefix_sum = np.zeros(self.m)
         v_blocks = v.reshape(self.n, self.m)
+        diagonal_blocks = np.array([self.blocks[i] @ v_blocks[i] for i in range(self.n)])
+        prefix_sums = np.cumsum(diagonal_blocks, axis=0)
         suffix_vector_sums = np.cumsum(v_blocks[::-1], axis=0)[::-1]
-        result = np.empty_like(v)
+        result_blocks = (
+            prefix_sums 
+            + np.array([self.blocks[i] @ suffix_vector_sums[i] for i in range(self.n)]) 
+            - diagonal_blocks
+        )
 
-        for i in range(self.n):
-            result[i*self.m : (i+1)*self.m] = prefix_sum + self.blocks[i] @ suffix_vector_sums[i]
-            prefix_sum += self.blocks[i] @ v_blocks[i]
-
-        return result
+        return result_blocks.flatten()
 
 
     def solve(self, b: np.ndarray) -> np.ndarray:
