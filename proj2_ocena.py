@@ -7,11 +7,16 @@ def matrix_from_onion(onion):
     """
     Constructs a matrix from an OnionMatrix object.
     """
-    blocks = [
-        [onion.blocks[i] if j > i else onion.blocks[j] for j in range(onion.n)] 
-        for i in range(onion.n)
-    ]
-    return np.block(blocks)
+    n, m, blocks = onion.n, onion.m, onion.blocks
+    matrix = np.empty((n * m, n * m))
+
+    for i in range(n):
+        for j in range(i, n):
+            block = blocks[i] if j > i else blocks[j]
+            matrix[i*m:(i+1)*m, j*m:(j+1)*m] = block
+            matrix[j*m:(j+1)*m, i*m:(i+1)*m] = block
+
+    return matrix
 
 ##############################################################################
 # test m=n=3
