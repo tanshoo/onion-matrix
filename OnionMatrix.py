@@ -29,16 +29,13 @@ class OnionMatrix:
         """
 
         prefix_sum = np.zeros(self.m)
-        suffix_vector_sum = np.sum(
-            v[i*self.m : (i+1)*self.m] for i in range(self.n)
-        )
+        v_blocks = v.reshape(self.n, self.m)
+        suffix_vector_sums = np.cumsum(v_blocks[::-1], axis=0)[::-1]
         result = np.empty_like(v)
 
         for i in range(self.n):
-            v_block = v[i*self.m : (i+1)*self.m]
-            prefix_sum += self.blocks[i] @ v_block
-            suffix_vector_sum -= v_block
-            result[i*self.m : (i+1)*self.m] = prefix_sum + self.blocks[i] @ suffix_vector_sum
+            result[i*self.m : (i+1)*self.m] = prefix_sum + self.blocks[i] @ suffix_vector_sums[i]
+            prefix_sum += self.blocks[i] @ v_blocks[i]
 
         return result
 
